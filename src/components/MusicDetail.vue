@@ -3,11 +3,15 @@
     <div class="ion-arrow-left-a">aaa</div>
     
     <div class="page-content text-center">
-      <div id="jsi-particle-container" class="container"></div>
       <div class="MusicDetailContent">
         <div class="MusicDetailContent-img">
-          
+          <!-- 播放器特效 -->
+          <canvas class="canvas canvas-pattern js-canvas" width="200px" height="200px"></canvas>
+          <canvas class="canvas js-duplicate" width="200px" height="200px"></canvas>
           <!-- <img :src="MusicDetailImg" alt=""> -->
+          <!-- 播放器进度条 -->
+          <div  :class="played?'ion-pause':'ion-play'" @click="playMusic"></div>
+           <audio id ="playerInMusicDetail" loop="loop" src="http://sc1.111ttt.cn/2016/1/12/10/205102107353.mp3"  ref ="playerInMusicDetail" autoplay="true"></audio>
         </div>
       </div>
     </div>
@@ -18,7 +22,7 @@
   export default {
     data () { 
       return {
-        MusicDetailImg: require('../assets/1.jpg'),
+        played:"true",
         
       }
     },
@@ -26,269 +30,229 @@
       back() {
         $router.back('/')
       },
+      playMusic(){
+        let media = document.getElementById("playerInMusicDetail")
+        if(media.paused) {  
+        media.play();
+        this.played = true;
+        } 
+        else {  
+        media.pause();
+        this.played = false;
+        console.log(document.getElementsByClassName("ion-play"))
+        document.getElementsByClassName("ion-play").className ="ion-pause"
+        }  
+      },
     },
-    mounted:  function playspecial() {
-      var RENDERER = {
-      PARTICLE_COUNT : 1000,
-      PARTICLE_RADIUS : 1,
-      MAX_ROTATION_ANGLE : Math.PI / 60,
-      TRANSLATION_COUNT : 500,
-      
-      init : function(strategy){
-        this.setParameters(strategy);
-        this.createParticles();
-        this.setupFigure();
-        this.reconstructMethod();
-        this.bindEvent();
-        this.drawFigure();
-      },
-      setParameters : function(strategy){
-        this.$window = $(window);
-        
-        this.$container = $('#jsi-particle-container');
-        this.width = this.$container.width();
-        this.height = this.$container.height();
-        
-        this.$canvas = $('<canvas />').attr({width : this.width, height : this.height}).appendTo(this.$container);
-        this.context = this.$canvas.get(0).getContext('2d');
-        
-        this.center = {x : this.width / 2, y : this.height / 2};
-        
-        this.rotationX = this.MAX_ROTATION_ANGLE;
-        this.rotationY = this.MAX_ROTATION_ANGLE;
-        this.strategyIndex = 0;
-        this.translationCount = 0;
-        this.theta = 0;
-        
-        this.strategies = strategy.getStrategies();
-        this.particles = [];
-      },
-      createParticles : function(){
-        for(var i = 0; i < this.PARTICLE_COUNT; i ++){
-          this.particles.push(new PARTICLE(this.center));
+    mounted:  function playAnimation() {
+      //播放动画特效
+      const canvas = document.querySelector('.js-canvas');
+      const ctx = canvas.getContext('2d');
+
+      const canvas2 = document.querySelector('.js-duplicate');
+      const ctx2 = canvas2.getContext('2d');
+
+      const dim = Math.min(window.innerWidth, window.innerHeight) * 0.7;
+      const w = dim;
+      const h = dim;
+      const midX = w >> 1;
+      const midY = h >> 1;
+
+      const PI = Math.PI;
+      const TO_RADIAN = PI / 180;
+
+      const maxDepth = 5;
+      const maxSpread = 90 * TO_RADIAN;
+
+      let autoAnimate = true;
+      let divergeAt = 0.5;
+      let spread = 45 * TO_RADIAN;
+      let tick = 0;
+
+      let autoSpeed = 0.004;
+      let autoTick = 0;
+
+      canvas.width = canvas2.width = w;
+      canvas.height = canvas2.height = h;
+
+      class Branch {
+        constructor(position = {x : 0, y: 0}, length = 100, divergeAt = 0.5, angle = 0, depth = 0, spread = 45 * TO_RADIAN) {
+          this.position = position;
+          this.length = length;
+          this.divergeAt = divergeAt;
+          this.angle = angle;
+          this.depth = depth;
+
+          this.color = '#000';
+          this.spread = spread;
+          this.branches = [];
+
+          this.grow();
         }
-      },
-      reconstructMethod : function(){
-        this.setupFigure = this.setupFigure.bind(this);
-        this.drawFigure = this.drawFigure.bind(this);
-        this.changeAngle = this.changeAngle.bind(this);
-      },
-      bindEvent : function(){
-        this.$container.on('click', this.setupFigure);
-        this.$container.on('mousemove', this.changeAngle);
-      },
-      changeAngle : function(event){
-        var offset = this.$container.offset(),
-          x = event.clientX - offset.left + this.$window.scrollLeft(),
-          y = event.clientY - offset.top + this.$window.scrollTop();
-        
-        this.rotationX = (this.center.y - y) / this.center.y * this.MAX_ROTATION_ANGLE;
-        this.rotationY = (this.center.x - x) / this.center.x * this.MAX_ROTATION_ANGLE;
-      },
-      setupFigure : function(){
-        for(var i = 0, length = this.particles.length; i < length; i++){
-          this.particles[i].setAxis(this.strategies[this.strategyIndex]());
-        }
-        if(++this.strategyIndex == this.strategies.length){
-          this.strategyIndex = 0;
-        }
-        this.translationCount = 0;
-      },
-      drawFigure : function(){
-        requestAnimationFrame(this.drawFigure);
-        
-        this.context.fillStyle = 'rgba(0, 0, 0, 0.2)';
-        this.context.fillRect(0, 0, this.width, this.height);
-        
-        for(var i = 0, length = this.particles.length; i < length; i++){
-          var axis = this.particles[i].getAxis2D(this.theta);
-          
-          this.context.beginPath();
-          this.context.fillStyle = axis.color;
-          this.context.arc(axis.x, axis.y, this.PARTICLE_RADIUS, 0, Math.PI * 2, false);
-          this.context.fill();
-        }
-        this.theta++;
-        this.theta %= 360;
-        
-        for(var i = 0, length = this.particles.length; i < length; i++){
-          this.particles[i].rotateX(this.rotationX);
-          this.particles[i].rotateY(this.rotationY);
-        }
-        this.translationCount++;
-        this.translationCount %= this.TRANSLATION_COUNT;
-        
-        if(this.translationCount == 0){
-          this.setupFigure();
-        }
-      }
-    };
-    var STRATEGY = {
-      SCATTER_RADIUS :150,
-      CONE_ASPECT_RATIO : 1.5,
-      RING_COUNT : 5,
-      
-      getStrategies : function(){
-        var strategies = [];
-        
-        for(var i in this){
-          if(this[i] == arguments.callee || typeof this[i] != 'function'){
-            continue;
+
+        grow() {
+          if (!this.canBranch) {
+            return;
           }
-          strategies.push(this[i].bind(this));
+
+          this.branches = [];
+
+          const nextLength = this.length * 0.75;
+          const nextDepth = this.depth + 1;
+
+          this.branches.push(
+            new Branch(
+              this.growPosition,
+              nextLength,
+              this.divergeAt,
+              this.angle + this.spread,
+              nextDepth,
+              this.spread
+            ),
+            new Branch(
+              this.growPosition,
+              nextLength,
+              this.divergeAt,
+              this.angle - this.spread,
+              nextDepth,
+              this.spread
+            )
+          );
         }
-        return strategies;
-      },
-      createSphere : function(){
-        var cosTheta = Math.random() * 2 - 1,
-          sinTheta = Math.sqrt(1 - cosTheta * cosTheta),
-          phi = Math.random() * 2 * Math.PI;
-          
-        return {
-          x : this.SCATTER_RADIUS * sinTheta * Math.cos(phi),
-          y : this.SCATTER_RADIUS * sinTheta * Math.sin(phi),
-          z : this.SCATTER_RADIUS * cosTheta,
-          hue : Math.round(phi / Math.PI * 30)
-        };
-      },
-      createTorus : function(){
-        var theta = Math.random() * Math.PI * 2,
-          x = this.SCATTER_RADIUS + this.SCATTER_RADIUS / 6 * Math.cos(theta),
-          y = this.SCATTER_RADIUS / 6 * Math.sin(theta),
-          phi = Math.random() * Math.PI * 2;
-        
-        return {
-          x : x * Math.cos(phi),
-          y : y,
-          z : x * Math.sin(phi),
-          hue : Math.round(phi / Math.PI * 30)
-        };
-      },
-      createCone : function(){
-        var status = Math.random() > 1 / 3,
-          x,
-          y,
-          phi = Math.random() * Math.PI * 2,
-          rate = Math.tan(30 / 180 * Math.PI) / this.CONE_ASPECT_RATIO;
-        
-        if(status){
-          y = this.SCATTER_RADIUS * (1 - Math.random() * 2);
-          x = (this.SCATTER_RADIUS - y) * rate;
-        }else{
-          y = -this.SCATTER_RADIUS;
-          x = this.SCATTER_RADIUS * 2 * rate * Math.random();
+
+        update(spread, divergeAt) {
+          this.spread = spread;
+          this.divergeAt = divergeAt;
+
+          this.grow();
         }
-        return {
-          x : x * Math.cos(phi),
-          y : y,
-          z : x * Math.sin(phi),
-          hue : Math.round(phi / Math.PI * 30)
-        };
-      },
-      createVase : function(){
-        var theta = Math.random() * Math.PI,
-          x = Math.abs(this.SCATTER_RADIUS * Math.cos(theta) / 2) + this.SCATTER_RADIUS / 8,
-          y = this.SCATTER_RADIUS * Math.cos(theta) * 1.2,
-          phi = Math.random() * Math.PI * 2;
-        
-        return {
-          x : x * Math.cos(phi),
-          y : y,
-          z : x * Math.sin(phi),
-          hue : Math.round(phi / Math.PI * 30)
-        };
+
+        get growPosition() {
+          const dl = this.length * this.divergeAt;
+
+          return {
+            x: this.position.x + (Math.cos(this.angle) * dl),
+            y: this.position.y + (Math.sin(this.angle) * dl),
+          };
+        }
+
+        get canBranch() {
+          return this.depth < maxDepth;
+        }
       }
-    };
-    var PARTICLE = function(center){
-      this.center = center;
-      this.init();
-    };
-    PARTICLE.prototype = {
-      SPRING : 0.01,
-      FRICTION : 0.9,
-      FOCUS_POSITION : 300,
-      COLOR : 'hsl(%hue, 100%, 70%)',
-      
-      init : function(){
-        this.x = 0;
-        this.y = 0;
-        this.z = 0;
-        this.vx = 0;
-        this.vy = 0;
-        this.vz = 0;
-        this.color;
-      },
-      setAxis : function(axis){
-        this.translating = true;
-        this.nextX = axis.x;
-        this.nextY = axis.y;
-        this.nextZ = axis.z;
-        this.hue = axis.hue;
-      },
-      rotateX : function(angle){
-        var sin = Math.sin(angle),
-          cos = Math.cos(angle),
-          nextY = this.nextY * cos - this.nextZ * sin,
-          nextZ = this.nextZ * cos + this.nextY * sin,
-          y = this.y * cos - this.z * sin,
-          z = this.z * cos + this.y * sin;
-          
-        this.nextY = nextY;
-        this.nextZ = nextZ;
-        this.y = y;
-        this.z = z;
-      },
-      rotateY : function(angle){
-        var sin = Math.sin(angle),
-          cos = Math.cos(angle),
-          nextX = this.nextX * cos - this.nextZ * sin,
-          nextZ = this.nextZ * cos + this.nextX * sin,
-          x = this.x * cos - this.z * sin,
-          z = this.z * cos + this.x * sin;
-          
-        this.nextX = nextX;
-        this.nextZ = nextZ;
-        this.x = x;
-        this.z = z;
-      },
-      rotateZ : function(angle){
-        var sin = Math.sin(angle),
-          cos = Math.cos(angle),
-          nextX = this.nextX * cos - this.nextY * sin,
-          nextY = this.nextY * cos + this.nextX * sin,
-          x = this.x * cos - this.y * sin,
-          y = this.y * cos + this.x * sin;
-          
-        this.nextX = nextX;
-        this.nextY = nextY;
-        this.x = x;
-        this.y = y;
-      },
-      getAxis3D : function(){
-        this.vx += (this.nextX - this.x) * this.SPRING;
-        this.vy += (this.nextY - this.y) * this.SPRING;
-        this.vz += (this.nextZ - this.z) * this.SPRING;
-        
-        this.vx *= this.FRICTION;
-        this.vy *= this.FRICTION;
-        this.vz *= this.FRICTION;
-        
-        this.x += this.vx;
-        this.y += this.vy;
-        this.z += this.vz;
-        
-        return {x : this.x, y : this.y, z : this.z};
-      },
-      getAxis2D : function(theta){
-        var axis = this.getAxis3D(),
-          scale = this.FOCUS_POSITION / (this.FOCUS_POSITION + axis.z);
-          
-        return {x : this.center.x + axis.x * scale, y : this.center.y - axis.y * scale, color : this.COLOR.replace('%hue', this.hue + theta)};
-      }
-    };
-    $(function(){
-      RENDERER.init(STRATEGY);
-    });
+
+      const rootBranch = new Branch(
+        { x: midX, y: midY },
+        midY * 0.5,
+        divergeAt,
+        -90 * TO_RADIAN,
+        0,
+        spread
+      );
+
+      const drawBranch = (branch, phase) => {
+        const h = ~~(200 + (160 * phase));
+        const l = 50 + ~~(((branch.depth / (maxDepth + 1))) * 50);
+
+        const endX = branch.length;
+        const endY = 0;
+        const r = 2;
+
+        ctx.save();
+
+        ctx.strokeStyle = `hsl(${h}, 100%, ${l}%)`;
+        ctx.translate(branch.position.x, branch.position.y);
+        ctx.rotate(branch.angle);
+
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+        ctx.closePath();
+
+        ctx.beginPath();
+        ctx.fillStyle = `hsl(${h}, 100%, 50%)`;
+        ctx.arc(endX, endY, r, 0, PI * 2, false);
+        ctx.fill();
+        ctx.closePath();
+
+        ctx.restore();
+
+        branch.branches.forEach((b) => {
+          drawBranch(b, phase);
+        });
+      };
+
+      const map = (value, start1, stop1, start2, stop2) => ((value - start1) / (stop1 - start1)) * (stop2 - start2) + start2;
+
+      const clear = () => {
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        ctx2.clearRect(0, 0, ctx2.canvas.width, ctx2.canvas.height);
+      };
+
+      const loop = () => {
+        let phase = rootBranch.spread / maxSpread;
+
+        clear(phase);
+
+        if (autoAnimate) {
+          phase = map(Math.sin(autoTick), -1, 1, 0, 1);
+
+          spread = phase * maxSpread;
+          divergeAt = map(Math.sin(autoTick), -1, 1, 0, 0.5);
+
+          autoTick += autoSpeed;
+        }
+
+        rootBranch.update(spread, divergeAt);
+
+        drawBranch(rootBranch, phase);
+
+        const numSegments = 12;
+        const angleInc = PI * 2 / numSegments;
+        let angle = tick;
+
+        for (let i = 0; i < numSegments; i++) {
+          ctx2.save();
+          ctx2.translate(midX, midY);
+          ctx2.rotate(angle);
+          ctx2.drawImage(canvas, -w / 2, -h / 2);
+          ctx2.restore();
+          angle += angleInc;
+        }
+
+        tick += 0.002;
+
+        requestAnimationFrame(loop);
+      };
+
+      const onPointerMove = (e) => {
+        if (autoAnimate) {
+          return;
+        }
+
+        const target = (e.touches && e.touches.length) ? e.touches[0] : e;
+        const { clientX: x, clientY: y } = target;
+
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
+        spread = (x / width) * maxSpread;
+        divergeAt = y / height;
+      };
+      //加入点击改变特效
+      document.body.addEventListener('mousemove', onPointerMove);
+      document.body.addEventListener('touchmove', onPointerMove);
+
+      document.addEventListener('mouseenter', () => {
+        autoAnimate = false;
+      });
+
+      document.addEventListener('mouseleave', () => {
+        autoAnimate = true;
+      });
+
+      loop();
     }
   }
 </script>
@@ -297,19 +261,24 @@
     width: 80%;
     height: 500px;
   }
-html,body {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-}
-.container{
-    width: 100％;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    background-color: #000000;
-}
+  html,body {
+    margin:0;
+    padding:0;
+    overflow:hidden;
+    background-color:#000000
+  }
+  body {
+    height:100vh;
+    /* display:flex; */
+    align-items:center;
+    justify-content:center;
+  }
+  .canvas {
+    display:block;
+    border-radius:50%;
+  }
+  .canvas-pattern {
+    display:none;
+  }
 </style>
 

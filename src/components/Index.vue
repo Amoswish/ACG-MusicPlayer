@@ -68,14 +68,14 @@
           <img :src="playerimg" alt="" >
           </router-link>
         </div>
-        <audio id ="playerInBottom" loop="loop" src="http://sc1.111ttt.cn/2016/1/12/10/205102107353.mp3" autoplay="true" @timeupdate="updateTime"></audio>
+        <audio id ="playerInBottom" loop="loop" src="http://sc1.111ttt.cn/2016/1/12/10/205102107353.mp3"  ref ="playerInBottom" autoplay="true" @timeupdate="updateTime"></audio>
         <button class="ion-chevron-left"></button>
         <button :class="played?'ion-pause':'ion-play'" @click="playMusic()"></button>
         <button class="ion-chevron-right"></button>
-        <div class="progress-bar" style="display: flex;">
-          <div class="progress-bar-left"  :style="{width:haveplayed+'px' }"></div>
-          <div class="progress-bar-slider ion-happy-outline" @click="touchSlider"></div>
-          <div class="progress-bar-right" :style="{width:willplay+'px'}"></div>
+        <div class="progress-bar" style="display: flex;"    ref="progressBar" @click="touchSlider">
+          <div class="progress-bar-left"  :style="{width:haveplayed+'px'}"  ref="progressBarLeft"></div>
+          <div class="progress-bar-slider ion-happy-outline"  @mousemove="moveSlider" @mousedown="mouseDown" @mouseup="mouseUp"></div>
+          <div class="progress-bar-right" :style="{width:willplay+'px'}" ref="progressBarRight"></div>
         </div>
         <button>loop</button>
       </div>
@@ -99,9 +99,11 @@
         "搜索"
         ],
         haveplayed:'1',
-        willplay:'200',
+        willplay:'199',
+        persent:'0',
         playerimg: require('../assets/1.jpg'),
         tabIndex: 0,
+        isMouseDown:"false",
         recommandList:[
           {
             recommandTitle:"推荐1",
@@ -116,12 +118,19 @@
       }
       currentTime:''
     },
+    watch:{
+      persent:function(val){
+        this.haveplayed = this.persent;
+        this.willplay = 200-this.persent;
+        //console.log(val+"sss")
+      },
+    },
     methods: {
       onTabClick(index) {
         this.tabIndex = index
       },
       playMusic(){
-        var media = document.getElementById("playerInBottom")
+        let media = document.getElementById("playerInBottom")
         if(media.paused) {  
         media.play();
         this.played = true;
@@ -129,18 +138,46 @@
         else {  
         media.pause();
         this.played = false;
-        document.getElementsByClassName("ion-play").className ="ion-pause"
         }  
       },
+      //进度条随时间变化
       updateTime(e){
-        var currentTime = e.target.currentTime;
-        var duration = e.target.duration
-        var a = 200*currentTime/duration;
-        this.haveplayed=a.toString();
-        this.wilplay=(200-a).toString();
+        //console.log(e.target.currentTime);
+        let currentTime = e.target.currentTime;
+        let duration = e.target.duration
+        this.persent = 200*currentTime/duration;
+        return this.persent;
       },
+      //进度条事件
       touchSlider(e){
-        console.log(e);
+        e.preventDefault()
+        //点击播放器中的进度条改变播放器播放进度
+        let clickprocess = e.clientX-this.$refs.progressBarLeft.getBoundingClientRect().x;
+        this.haveplayed = clickprocess;
+        this.willplay = 200-clickprocess;
+        //修改音频播放进度
+        this.$refs.playerInBottom.currentTime = (clickprocess/200)*this.$refs.playerInBottom.duration;
+        this.persent = clickprocess;
+        
+      },
+      mouseDown(){
+        this.isMouseDown = "true";
+      },
+      mouseUp(){
+        this.isMouseDown = "false";
+      },
+      moveSlider(e){
+        //移动播放器中的小滑块改变播放器播放进度
+        e.preventDefault()
+        //点击播放器中的进度条改变播放器播放进度
+        if(isMouseDown){
+        let moveprocess = e.clientX-this.$refs.progressBarLeft.getBoundingClientRect().x;
+        this.haveplayed = moveprocess;
+        this.willplay = 200-moveprocess;
+        //修改音频播放进度
+        this.$refs.playerInBottom.currentTime = (moveprocess/200)*this.$refs.playerInBottom.duration;
+        this.persent = clickprocess;
+        }
       }
     },
 
