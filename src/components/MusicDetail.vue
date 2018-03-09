@@ -19,6 +19,7 @@
 </template>
 <script type="text/javascript" src="js/jquery.min.js"></script>
 <script>
+import store from '../vuex/store'
   export default {
     data () { 
       return {
@@ -28,6 +29,8 @@
     },
     methods: {
       back() {
+        let media = document.getElementById("playerInMusicDetail")
+        store.commit('savePlayerState',media)
         $router.back('/')
       },
       playMusic(){
@@ -45,6 +48,10 @@
       },
     },
     mounted:  function playAnimation() {
+      //修改当前播放器时间为跳转页面之前的时间
+      let media = document.getElementById("playerInMusicDetail")
+      media.currentTime = store.state.playercurrenttime
+      console.log(store.state.playercurrenttime)
       //播放动画特效
       const canvas = document.querySelector('.js-canvas');
       const ctx = canvas.getContext('2d');

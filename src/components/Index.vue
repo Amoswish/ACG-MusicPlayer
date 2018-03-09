@@ -64,11 +64,11 @@
       <div class="Music-Player-bottom" style="display: flex;">
         <div class="Music-Player-bottom-picture">
           
-          <router-link class="link" to="/MusicDetail">
+          <router-link class="link" @click.native="linkToMusicDetail" to="/MusicDetail">
           <img :src="playerimg" alt="" >
           </router-link>
         </div>
-        <audio id ="playerInBottom" loop="loop" src="http://sc1.111ttt.cn/2016/1/12/10/205102107353.mp3"  ref ="playerInBottom" autoplay="true" @timeupdate="updateTime"></audio>
+        <audio id ="playerInBottom" loop="loop" :src="audiosrc"  ref ="playerInBottom" autoplay="true" @timeupdate="updateTime"></audio>
         <button class="ion-chevron-left"></button>
         <button :class="played?'ion-pause':'ion-play'" @click="playMusic()"></button>
         <button class="ion-chevron-right"></button>
@@ -94,6 +94,7 @@
     data () {
       return {
         msg: 'My First  MusicPlayer.',
+        audiosrc:'http://sc1.111ttt.cn/2016/1/12/10/205102107353.mp3',
         msaag: 'ss',
         tabs: [
         "推荐",
@@ -136,8 +137,6 @@
         if(media.paused) {  
         media.play();
         this.played = true;
-        //store.commit('increment')
-        console.log(store.state.count)
         } 
         else {  
         media.pause();
@@ -182,9 +181,21 @@
         this.$refs.playerInBottom.currentTime = (moveprocess/200)*this.$refs.playerInBottom.duration;
         this.persent = clickprocess;
         }
+      },
+      linkToMusicDetail(e){
+        //router跳转时保存当前播放的音乐的状态
+        let media = document.getElementById("playerInBottom")
+        store.commit('savePlayerState',media)
+        //console.log(store.state.playercurrenttime)
       }
     },
-
+    mounted:function initIndexPage(){
+      //修改当前播放器时间为跳转页面之前的时间
+        let media = document.getElementById("playerInMusicDetail")
+        media.currentTime = store.state.playercurrenttime
+        console.log(store.state.playercurrenttime)
+      
+    }
   }
   
 </script>
