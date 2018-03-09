@@ -88,6 +88,8 @@
 </template>
 <script type="text/javascript" src="js/jquery.min.js"></script>
 <script>
+  //导入vuex的仓库
+  import store from '../vuex/store'
   export default {
     data () {
       return {
@@ -134,6 +136,8 @@
         if(media.paused) {  
         media.play();
         this.played = true;
+        //store.commit('increment')
+        console.log(store.state.count)
         } 
         else {  
         media.pause();
