@@ -61,7 +61,7 @@
         </div>
       </div>
       <h2 class="padding" v-text="msg"></h2>
-      <div class="Music-Player-bottom" style="display: flex;">
+      <div class="Music-Player-bottom">
         <div class="Music-Player-bottom-picture">
           
           <router-link class="link" @click.native="linkToMusicDetail" to="/MusicDetail">
@@ -74,7 +74,7 @@
         <button class="ion-chevron-right"></button>
         <div class="progress-bar" style="display: flex;"    ref="progressBar" @click="touchSlider">
           <div class="progress-bar-left"  :style="{width:haveplayed+'px'}"  ref="progressBarLeft"></div>
-          <div class="progress-bar-slider ion-happy-outline"  @mousemove="moveSlider" @mousedown="mouseDown" @mouseup="mouseUp"></div>
+          <div class="progress-bar-slider"  @mousemove="moveSlider" @mousedown="mouseDown" @mouseup="mouseUp"></div>
           <div class="progress-bar-right" :style="{width:willplay+'px'}" ref="progressBarRight"></div>
         </div>
         <button>loop</button>
@@ -209,7 +209,11 @@
     padding-top: 100px;
   }
   .Music-Player-bottom {
-    height: 20px;
+    display: flex;
+    height: 30px;
+    border-style:solid;
+    border-color:black;
+    border-width: 1px;
   }
   .Music-Player-bottom-picture > .link >img {
 
@@ -226,14 +230,35 @@
     background-color: aqua;
   }
   .progress-bar {
+    margin-top: 23px;
+    height: 5px;
   }
   .progress-bar > .progress-bar-left{
-    background-color: red;
+    
+    display:block; 
+    background:#d8eb28; 
+    width:0; 
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    background-image:linear-gradient(-45deg,rgba(255,255,255,.2) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.2) 50%,rgba(255,255,255,.2) 75%,transparent 75%,transparent); 
+    /* -webkit-transition:width .8s ease; 
+    -moz-transition:width .8s ease; 
+    transition:width .8s ease;
+    -webkit-animation:progressbar 7s infinite; 
+    animation:progressbar 7s infinite */
   }
   .progress-bar > .progress-bar-right{
-    background-color:palegreen;
+    
+    display:block; 
+    background:gray; 
+    width:0; 
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
   }
   .progress-bar > .progress-bar-slider{
-    background-color: yellow;
+    width: 10px;
+    border-radius: 5px;
+    border-color: black;
+    background-color: blue;
   }
 </style>
