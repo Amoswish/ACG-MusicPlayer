@@ -1,8 +1,8 @@
 {
-  "name": "Acg Music Player",
+  "name": "ACG-MusicPlayer",
   "version": "1.0.0",
-  "description": "AcgMusicPlayer",
-  "author": "wuhao <1572912653@qq.com>",
+  "description": "A Vonic Project",
+  "author": "wuhao<1572912653@qq.com>",
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",
