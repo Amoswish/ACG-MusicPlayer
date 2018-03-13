@@ -106,9 +106,12 @@ import store from '../vuex/store'
         //console.log(store.state.playercurrenttime)
       }
     },
-    mounted:  function playAnimation() {
-      //修改当前播放器时间为跳转页面之前的时间
+    mounted:  function initMusicDetail() {
+      //初始化播放链接
       let media = document.getElementById("playerInMusicDetail")
+      let initplay= store.state.playerIndex
+      media.src =store.state.musicList[initplay].musicSrc
+      //修改当前播放器时间为跳转页面之前的时间
       media.currentTime = store.state.playercurrenttime
       console.log(store.state.playercurrenttime)
       //播放动画特效

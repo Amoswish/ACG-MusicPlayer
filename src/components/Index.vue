@@ -12,28 +12,11 @@
           </accordion>
         </div>
         <div v-if="tabIndex==1" class="myMusic">
-            <accordion class="">
-            <accordion-item title="农夫" content-height="110">
-            <p>
-              如果有一天我能够拥有一个大果园，
-              我愿放下所有追求做个农夫去种田，
-              每一个早晨我耕耘在绿野田园，
-              每一个黄昏我守望在乡间的麦田。
-              我会把忧虑都融化在夕阳里，
-              让孤独的心等待秋收的欢喜。
-            </p>
-            </accordion-item>
-            <accordion-item title="渔夫" content-height="110">
-            <p>
-              如果有一天我能够拥有一条渔船，
-              我愿放下所有执着做个渔夫住在海边，
-              每一个早晨我航行在晨曦的海面，
-              每一个黄昏我遥望在无际的海云间。
-              我会把思绪都消失在波涛里，
-              让澎湃的心等待风雨后的平息。
-            </p>
-            </accordion-item>
-          </accordion>
+          <div class="myMusic-content">
+            <list class="myMusic-content-musiclist"  v-for="musiclist in this.$store.state.musicList">
+              <item>{{musiclist.musicName}}</item>
+            </list>
+          </div>
         </div>
         <div v-if="tabIndex==2" class="search">
             <accordion>
@@ -68,10 +51,10 @@
           <img :src="playerimg" alt="" >
           </router-link>
         </div>
-        <audio id ="playerInBottom" loop="loop" :src="audiosrc"  ref ="playerInBottom" autoplay="true" @timeupdate="updateTime"></audio>
-        <button class="ion-chevron-left"></button>
+        <audio id ="playerInBottom" loop="loop"   ref ="playerInBottom" autoplay="true" @timeupdate="updateTime"></audio>
+        <button class="ion-chevron-left" @click="playLastSong()"></button>
         <button :class="played?'ion-pause':'ion-play'" @click="playMusic()"></button>
-        <button class="ion-chevron-right"></button>
+        <button class="ion-chevron-right" @click="playNextSong()"></button>
         <div class="progress-bar" style="display: flex;"    ref="progressBar" @click="touchSlider">
           <div class="progress-bar-left"  :style="{width:haveplayed+'px'}"  ref="progressBarLeft"></div>
           <div class="progress-bar-slider"  @mousemove="moveSlider" @mousedown="mouseDown" @mouseup="mouseUp"></div>
@@ -94,7 +77,6 @@
     data () {
       return {
         msg: 'My First  MusicPlayer.',
-        audiosrc:'http://sc1.111ttt.cn/2016/1/12/10/205102107353.mp3',
         msaag: 'ss',
         tabs: [
         "推荐",
@@ -132,11 +114,26 @@
       onTabClick(index) {
         this.tabIndex = index
       },
+      playLastSong(){
+        let media = document.getElementById("playerInBottom")
+        store.commit('playLastSong',media)
+        let Nextplay= store.state.playerIndex
+        media.src =store.state.musicList[Nextplay].musicSrc
+      },
+      playNextSong(){
+        let media = document.getElementById("playerInBottom")
+        store.commit('playNextSong',media)
+        let Nextplay= store.state.playerIndex
+        media.src =store.state.musicList[Nextplay].musicSrc
+        console.log(store.state.playerLength)
+        console.log(store.state.musicList[Nextplay].musicSrc)
+      },
       playMusic(){
         let media = document.getElementById("playerInBottom")
         if(media.paused) {  
         media.play();
         this.played = true;
+        
         } 
         else {  
         media.pause();
@@ -190,8 +187,12 @@
       }
     },
     mounted:function initIndexPage(){
+      //初始化播放链接
+      let media = document.getElementById("playerInBottom")
+      let initplay= store.state.playerIndex
+      media.src =store.state.musicList[initplay].musicSrc
       //修改当前播放器时间为跳转页面之前的时间
-        let media = document.getElementById("playerInMusicDetail")
+        
         media.currentTime = store.state.playercurrenttime
         console.log(store.state.playercurrenttime)
       
