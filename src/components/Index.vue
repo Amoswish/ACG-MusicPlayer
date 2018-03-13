@@ -13,8 +13,14 @@
         </div>
         <div v-if="tabIndex==1" class="myMusic">
           <div class="myMusic-content">
-            <list class="myMusic-content-musiclist"  v-for="musiclist in this.$store.state.musicList">
-              <item>{{musiclist.musicName}}</item>
+            <list class="myMusic-content-musiclist"  >
+              <div v-on:click="playSelectedSong(musiclist.musicIndex)" v-for="musiclist in this.$store.state.musicList" >
+                <item>{{musiclist.musicName}}
+                  <md-button v-if="musiclist.musicIndex == $store.state.playerIndex" class="button button-balanced button-fab"  > 
+                  <i class="icon ion-checkmark"></i>
+                  </md-button>
+                </item>
+              </div>
             </list>
           </div>
         </div>
@@ -107,6 +113,12 @@
       persent:function(val){
         this.haveplayed = this.persent;
         this.willplay = 200-this.persent;
+        if(this.willplay < 10){
+          let media = document.getElementById("playerInBottom")
+          store.commit('playNextSong',media)
+          let Nextplay= store.state.playerIndex
+          media.src =store.state.musicList[Nextplay].musicSrc
+        }
         //console.log(val+"sss")
       },
     },
@@ -178,6 +190,13 @@
         this.$refs.playerInBottom.currentTime = (moveprocess/200)*this.$refs.playerInBottom.duration;
         this.persent = clickprocess;
         }
+      },
+      playSelectedSong(neededplaysong){
+        //点击播放列表中的歌曲切歌
+        store.commit('changeSong',neededplaysong)
+        let media = document.getElementById("playerInBottom")
+        media.src =store.state.musicList[neededplaysong].musicSrc
+        console.log(neededplaysong)
       },
       linkToMusicDetail(e){
         //router跳转时保存当前播放的音乐的状态

@@ -13,17 +13,20 @@ export default new Vuex.Store(
         {
           musicName:"沙滩",
           musicSrc:"http://sc1.111ttt.cn/2016/1/12/10/205102107353.mp3",
-          musicImg:""
+          musicImg:"",
+          musicIndex:0
         },
         {
           musicName:"bgm",
           musicSrc:"http://sc1.111ttt.cn/2016/1/12/04/205041336213.mp3",
-          musicImg:""
+          musicImg:"",
+          musicIndex:1
         },
         {
           musicName:"天才白痴梦",
           musicSrc:"http://music.163.com/song/media/outer/url?id=172416.mp3",
-          musicImg:""
+          musicImg:"",
+          musicIndex:2
         },
       ],
       playercurrenttime:0,
@@ -42,6 +45,9 @@ export default new Vuex.Store(
       },
       playLastSong(state,currentaudio){
         state.playerIndex =(state.playerIndex+state.playerLength-1)%state.playerLength;
+      },
+      changeSong(state,neededplaysong){
+        state.playerIndex =neededplaysong;
       },
 
     }

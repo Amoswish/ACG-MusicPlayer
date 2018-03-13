@@ -60,7 +60,7 @@ import store from '../vuex/store'
         document.getElementsByClassName("ion-play").className ="ion-pause"
         }  
       },
-            //进度条随时间变化
+      //进度条随时间变化
       updateTime(e){
         //console.log(e.target.currentTime);
         let currentTime = e.target.currentTime;
@@ -106,6 +106,19 @@ import store from '../vuex/store'
         //console.log(store.state.playercurrenttime)
       }
     },
+    watch:{
+      persent:function(val){
+        this.haveplayed = this.persent;
+        this.willplay = 200-this.persent;
+        if(this.willplay < 10){
+          let media = document.getElementById("playerInBottom")
+          store.commit('playNextSong',media)
+          let Nextplay= store.state.playerIndex
+          media.src =store.state.musicList[Nextplay].musicSrc
+        }
+        //console.log(val+"sss")
+      },
+    },
     mounted:  function initMusicDetail() {
       //初始化播放链接
       let media = document.getElementById("playerInMusicDetail")
@@ -114,6 +127,7 @@ import store from '../vuex/store'
       //修改当前播放器时间为跳转页面之前的时间
       media.currentTime = store.state.playercurrenttime
       console.log(store.state.playercurrenttime)
+      //修改进度条
       //播放动画特效
       const canvas = document.querySelector('.js-canvas');
       const ctx = canvas.getContext('2d');
