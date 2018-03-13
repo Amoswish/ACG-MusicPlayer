@@ -16,7 +16,7 @@
             <list class="myMusic-content-musiclist"  >
               <div v-on:click="playSelectedSong(musiclist.musicIndex)" v-for="musiclist in this.$store.state.musicList" >
                 <item>{{musiclist.musicName}}
-                  <md-button v-if="musiclist.musicIndex == $store.state.playerIndex" class="button button-balanced button-fab"  > 
+                  <md-button v-if="musiclist.musicIndex == $store.state.playerIndex" class="button button-small button-balanced button-fab playedInMusicList" > 
                   <i class="icon ion-checkmark"></i>
                   </md-button>
                 </item>
@@ -50,23 +50,24 @@
         </div>
       </div>
       <h2 class="padding" v-text="msg"></h2>
-      <div class="Music-Player-bottom">
+      <div class="Music-Player-bottom" >
         <div class="Music-Player-bottom-picture">
-          
-          <router-link class="link" @click.native="linkToMusicDetail" to="/MusicDetail">
-          <img :src="playerimg" alt="" >
-          </router-link>
-        </div>
-        <audio id ="playerInBottom" loop="loop"   ref ="playerInBottom" autoplay="true" @timeupdate="updateTime"></audio>
-        <button class="ion-chevron-left" @click="playLastSong()"></button>
-        <button :class="played?'ion-pause':'ion-play'" @click="playMusic()"></button>
-        <button class="ion-chevron-right" @click="playNextSong()"></button>
-        <div class="progress-bar" style="display: flex;"    ref="progressBar" @click="touchSlider">
+          <!-- 音乐进度条 -->
+          <div class="progress-bar" style="display: flex;"    ref="progressBar" @click="touchSlider">
           <div class="progress-bar-left"  :style="{width:haveplayed+'px'}"  ref="progressBarLeft"></div>
           <div class="progress-bar-slider"  @mousemove="moveSlider" @mousedown="mouseDown" @mouseup="mouseUp"></div>
           <div class="progress-bar-right" :style="{width:willplay+'px'}" ref="progressBarRight"></div>
+        </div>          
+          <router-link class="link" @click.native="linkToMusicDetail" to="/MusicDetail">
+          <img :src="playerimg" alt="" >
+          </router-link>
+          <div style="margin-top:10px; font-size:30px">{{playingmusicname}}</div><br>
+          <audio id ="playerInBottom" loop="loop"   ref ="playerInBottom" autoplay="true" @timeupdate="updateTime"></audio>
+          <button class="button-small button button-calm ion-chevron-left" @click="playLastSong()"></button>
+          <button :class="played?'ion-pause':'ion-play' " class ="button-small button button-calm "  @click="playMusic()"></button>
+          <button class="button-small button button-calm ion-chevron-right" @click="playNextSong()"></button>
+          <button class="button-small button button-royal">l</button>
         </div>
-        <button>loop</button>
       </div>
       <!-- <div><router-link class="button button-assertive" to="/about">
         <i class="ion-information-circled"></i> About
@@ -89,9 +90,10 @@
         "我的音乐",
         "搜索"
         ],
-        haveplayed:'1',
-        willplay:'199',
-        persent:'0',
+        haveplayed:0,
+        willplay:0,
+        processwidth:0,
+        persent:0,
         playerimg: require('../assets/1.jpg'),
         tabIndex: 0,
         isMouseDown:"false",
@@ -106,18 +108,20 @@
           }
         ],
         played:true,
+        playingmusicname:"",
       }
       currentTime:''
     },
     watch:{
       persent:function(val){
         this.haveplayed = this.persent;
-        this.willplay = 200-this.persent;
-        if(this.willplay < 10){
+        this.willplay = this.processwidth-this.persent;
+        if(this.willplay < 5){
           let media = document.getElementById("playerInBottom")
           store.commit('playNextSong',media)
           let Nextplay= store.state.playerIndex
           media.src =store.state.musicList[Nextplay].musicSrc
+          this.playingmusicname = store.state.musicList[Nextplay].musicName
         }
         //console.log(val+"sss")
       },
@@ -129,66 +133,66 @@
       playLastSong(){
         let media = document.getElementById("playerInBottom")
         store.commit('playLastSong',media)
-        let Nextplay= store.state.playerIndex
-        media.src =store.state.musicList[Nextplay].musicSrc
+        let Lastplay= store.state.playerIndex
+        media.src =store.state.musicList[Lastplay].musicSrc
+        this.playingmusicname = store.state.musicList[Lastplay].musicName
       },
       playNextSong(){
         let media = document.getElementById("playerInBottom")
         store.commit('playNextSong',media)
         let Nextplay= store.state.playerIndex
         media.src =store.state.musicList[Nextplay].musicSrc
-        console.log(store.state.playerLength)
-        console.log(store.state.musicList[Nextplay].musicSrc)
+        this.playingmusicname = store.state.musicList[Nextplay].musicName
       },
       playMusic(){
         let media = document.getElementById("playerInBottom")
         if(media.paused) {  
-        media.play();
-        this.played = true;
+        media.play()
+        this.played = true
         
         } 
         else {  
-        media.pause();
-        this.played = false;
+        media.pause()
+        this.played = false
         }  
       },
       //进度条随时间变化
       updateTime(e){
         //console.log(e.target.currentTime);
-        let currentTime = e.target.currentTime;
+        let currentTime = e.target.currentTime
         let duration = e.target.duration
-        this.persent = 200*currentTime/duration;
-        return this.persent;
+        this.persent = this.processwidth*currentTime/duration
+        return this.persent
       },
       //进度条事件
       touchSlider(e){
         e.preventDefault()
         //点击播放器中的进度条改变播放器播放进度
-        let clickprocess = e.clientX-this.$refs.progressBarLeft.getBoundingClientRect().x;
-        this.haveplayed = clickprocess;
-        this.willplay = 200-clickprocess;
+        let clickprocess = e.clientX-this.$refs.progressBarLeft.getBoundingClientRect().x
+        this.haveplayed = clickprocess
+        this.willplay = this.processwidth-clickprocess
         //修改音频播放进度
-        this.$refs.playerInBottom.currentTime = (clickprocess/200)*this.$refs.playerInBottom.duration;
-        this.persent = clickprocess;
+        this.$refs.playerInBottom.currentTime = (clickprocess/this.processwidth)*this.$refs.playerInBottom.duration
+        this.persent = clickprocess
         
       },
       mouseDown(){
-        this.isMouseDown = "true";
+        this.isMouseDown = "true"
       },
       mouseUp(){
-        this.isMouseDown = "false";
+        this.isMouseDown = "false"
       },
       moveSlider(e){
         //移动播放器中的小滑块改变播放器播放进度
         e.preventDefault()
         //点击播放器中的进度条改变播放器播放进度
         if(isMouseDown){
-        let moveprocess = e.clientX-this.$refs.progressBarLeft.getBoundingClientRect().x;
-        this.haveplayed = moveprocess;
-        this.willplay = 200-moveprocess;
+        let moveprocess = e.clientX-this.$refs.progressBarLeft.getBoundingClientRect().x
+        this.haveplayed = moveprocess
+        this.willplay = this.processwidth-moveprocess
         //修改音频播放进度
-        this.$refs.playerInBottom.currentTime = (moveprocess/200)*this.$refs.playerInBottom.duration;
-        this.persent = clickprocess;
+        this.$refs.playerInBottom.currentTime = (moveprocess/this.processwidth)*this.$refs.playerInBottom.duration
+        this.persent = clickprocess
         }
       },
       playSelectedSong(neededplaysong){
@@ -210,6 +214,13 @@
       let media = document.getElementById("playerInBottom")
       let initplay= store.state.playerIndex
       media.src =store.state.musicList[initplay].musicSrc
+      this.playingmusicname = store.state.musicList[initplay].musicName
+      //初始化进度条长度
+
+      let player = document.getElementsByClassName("Music-Player-bottom")
+       console.log(player)
+      this.processwidth = player[0].offsetWidth*0.97;
+      this.willplay = this.processwidth-1;
       //修改当前播放器时间为跳转页面之前的时间
         
         media.currentTime = store.state.playercurrenttime
@@ -230,28 +241,35 @@
   }
   .Music-Player-bottom {
     display: flex;
-    height: 30px;
+    position: fixed;
+    bottom: 3%;
+    left: 5%;
+    height: 15%;
+    width: 90%;
     border-style:solid;
     border-color:black;
     border-width: 1px;
   }
   .Music-Player-bottom-picture > .link >img {
-
-    width: 30px;
-    height: 30px;
+    float: left;
+    margin-left: 3%;
+    margin-top: 3%;
+    width: 30%;
+    height: 70%;
   }
   .Music-Player-bottom > audio{
     border-style:solid;
     width: 50%;
   }
   .Music-Player-bottom > button{
-    width: 5%;
+    width: 3%;
+    height: 3%;
     border: none;
     background-color: aqua;
   }
   .progress-bar {
-    margin-top: 23px;
-    height: 5px;
+    margin-top: 0px;
+    height: 8px;
   }
   .progress-bar > .progress-bar-left{
     
@@ -280,5 +298,8 @@
     border-radius: 5px;
     border-color: black;
     background-color: blue;
+  }
+  .playedInMusicList{
+    height: 30px;
   }
 </style>

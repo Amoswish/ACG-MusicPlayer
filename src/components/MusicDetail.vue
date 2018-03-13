@@ -6,8 +6,8 @@
       <div class="MusicDetailContent">
         <div class="MusicDetailContent-img">
           <!-- 播放器特效 -->
-          <canvas class="canvas canvas-pattern js-canvas" width="200px" height="200px"></canvas>
-          <canvas class="canvas js-duplicate" width="200px" height="200px"></canvas>
+          <canvas class="canvas canvas-pattern js-canvas" ></canvas>
+          <canvas class="canvas js-duplicate" ></canvas>
           <!-- <img :src="MusicDetailImg" alt=""> -->
           <!-- 播放器进度条 -->
             <div class="progress-bar" style="display: flex;"    ref="progressBar" @click="touchSlider">
@@ -358,8 +358,11 @@ import store from '../vuex/store'
     justify-content:center;
   }
   .canvas {
+    margin-left: 20%;
     display:block;
     border-radius:50%;
+    width: 80%;
+    height: auto;
   }
   .canvas-pattern {
     display:none;
