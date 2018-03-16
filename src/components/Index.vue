@@ -55,7 +55,7 @@
           <!-- 音乐进度条 -->
           <div class="progress-bar" style="display: flex;"    ref="progressBar" @click="touchSlider">
           <div class="progress-bar-left"  :style="{width:haveplayed+'px'}"  ref="progressBarLeft"></div>
-          <div class="progress-bar-slider"  @mousemove="moveSlider" @mousedown="mouseDown" @mouseup="mouseUp"></div>
+          <div class="progress-bar-slider" @touchmove="moveSlider" @mousemove="moveSlider" @mousedown="mouseDown" @mouseup="mouseUp"></div>
           <div class="progress-bar-right" :style="{width:willplay+'px'}" ref="progressBarRight"></div>
         </div>          
           <router-link class="link" @click.native="linkToMusicDetail" to="/MusicDetail">
@@ -249,6 +249,7 @@
     border-style:solid;
     border-color:black;
     border-width: 1px;
+    box-shadow: 10px 10px 5px #87c6eb;
   }
   .Music-Player-bottom-picture > .link >img {
     float: left;
