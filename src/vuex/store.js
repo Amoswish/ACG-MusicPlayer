@@ -1,11 +1,10 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import axios from 'axios'
 Vue.use(Vuex)
-
 // const state = {
 //   count: 1
 // }
-
 export default new Vuex.Store(
   {
     state:{
@@ -29,6 +28,18 @@ export default new Vuex.Store(
           musicIndex:2
         },
       ],
+      recommandList:[
+        {
+          recommandTitle:"推荐1",
+          recommandContent:"如果有一天我能够拥有一个大果园1111111111111111",
+          recommandMusicSrc:"",
+        },
+        {
+          recommandTitle:"推荐2",
+          recommandContent:"aaaz",
+          recommandMusicSrc:"",
+        }
+      ],
       playercurrenttime:0,
       playerIndex:0,
       playerLength:3,
@@ -49,7 +60,26 @@ export default new Vuex.Store(
       changeSong(state,neededplaysong){
         state.playerIndex =neededplaysong;
       },
-
+      getRecommandList(state){
+        console.log(getRecommandList())
+        let recommandlist = getRecommandList();
+        for(item in recommandlist){
+          let newObj = {};
+          newObj.recommandTitle = item.title;
+          newObj.recommandMusicSrc = item.linkUrl;
+          state.recommandlist.push(newObj);
+        }
+      }
+    }
+    actions: {
+      // 创建推荐列表
+      initRecommandList (state) {
+        axios({
+          method: 'post',
+          url: '/user',
+          data: context.state.test02
+        })
+      }
     }
   }
 )

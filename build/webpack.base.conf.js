@@ -32,6 +32,10 @@ module.exports = {
       'vonic': 'vonic/src/index.js'
     }
   },
+  target: 'node',
+    // node: {
+    //   fs: 'empty',
+    // },
   module: {
     rules: [
       {

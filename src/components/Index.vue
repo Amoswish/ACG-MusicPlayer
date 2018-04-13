@@ -4,15 +4,11 @@
       <tabs class="tabs music-header"   :tab-items="tabs" :tab-index="tabIndex" :on-tab-click="onTabClick"></tabs>
       <div class="main-content">
         <div v-if="tabIndex==0" class="recommand">
-          <accordion class="recommand-list" v-for="recommandMusic in recommandList">
-            <accordion-item :title="recommandMusic.recommandTitle" content-height="110">
-            <p>{{recommandMusic.recommandContent}}
-            </p>
-            </accordion-item>
-          </accordion>
+          <recommandList></recommandList>
         </div>
         <div v-if="tabIndex==1" class="myMusic">
           <div class="myMusic-content">
+            <importMusic></importMusic>
             <list class="myMusic-content-musiclist"  >
               <div v-on:click="playSelectedSong(musiclist.musicIndex)" v-for="musiclist in this.$store.state.musicList" >
                 <item>{{musiclist.musicName}}
@@ -25,28 +21,7 @@
           </div>
         </div>
         <div v-if="tabIndex==2" class="search">
-            <accordion>
-            <accordion-item title="农夫" content-height="110">
-            <p>
-              如果有一天我能够拥有一个大果园，
-              我愿放下所有追求做个农夫去种田，
-              每一个早晨我耕耘在绿野田园，
-              每一个黄昏我守望在乡间的麦田。
-              我会把忧虑都融化在夕阳里，
-              让孤独的心等待秋收的欢喜。
-            </p>
-            </accordion-item>
-            <accordion-item title="渔夫" content-height="110">
-            <p>
-              如果有一天我能够拥有一条渔船，
-              我愿放下所有执着做个渔夫住在海边，
-              每一个早晨我航行在晨曦的海面，
-              每一个黄昏我遥望在无际的海云间。
-              我会把思绪都消失在波涛里，
-              让澎湃的心等待风雨后的平息。
-            </p>
-            </accordion-item>
-          </accordion>
+          <searchMusic></searchMusic>
         </div>
       </div>
       <h2 class="padding" v-text="msg"></h2>
@@ -216,11 +191,12 @@
       media.src =store.state.musicList[initplay].musicSrc
       this.playingmusicname = store.state.musicList[initplay].musicName
       //初始化进度条长度
-
       let player = document.getElementsByClassName("Music-Player-bottom")
        console.log(player)
       this.processwidth = player[0].offsetWidth*0.97;
       this.willplay = this.processwidth-1;
+      //初始化推荐列表
+      //store.commit('getRecommandList')
       //修改当前播放器时间为跳转页面之前的时间
         
         media.currentTime = store.state.playercurrenttime
