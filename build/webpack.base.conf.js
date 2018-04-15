@@ -9,7 +9,8 @@ function resolve (dir) {
 
 module.exports = {
   entry: {
-    app: './src/main.js'
+    app: './src/main.js',
+    // test: './src/server/index.js'
   },
   output: {
     path: config.build.assetsRoot,
@@ -32,10 +33,6 @@ module.exports = {
       'vonic': 'vonic/src/index.js'
     }
   },
-  target: 'node',
-    // node: {
-    //   fs: 'empty',
-    // },
   module: {
     rules: [
       {

@@ -2,8 +2,7 @@
     <div  class="recommand-list">
           <accordion  v-for="recommandMusic in this.$store.state.recommandList">
             <accordion-item :title="recommandMusic.recommandTitle" content-height="110">
-            <p>{{recommandMusic.recommandContent}}
-            </p>
+              <p>{{recommandMusic.recommandContent}}</p>
             </accordion-item>
           </accordion>
           </div>
@@ -17,19 +16,10 @@ import store from '../vuex/store'
         searching: false
       }
     },
-
     methods: {
-      onSearch(keywords) {
-        this.searching = true;
-      },
-
-      onCancel() {
-        this.searching = false;
-        this.keywords = ''
-      },
+      aaa(){
+        console.log(document.getElementsByTagName('p'))
+      }
     },
-    mounted:function initIndexPage(){
-
-    }
   }
 </script>

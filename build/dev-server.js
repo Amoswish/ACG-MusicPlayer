@@ -1,5 +1,5 @@
 require('./check-versions')()
-
+//var routes = require('../src/server/routers')
 var config = require('../config')
 if (!process.env.NODE_ENV) {
   process.env.NODE_ENV = JSON.parse(config.dev.env.NODE_ENV)
@@ -66,11 +66,25 @@ app.use(staticPath, express.static('./static'))
 var vonicPath = path.posix.join(config.dev.assetsPublicPath, 'vonic')
 app.use(vonicPath, express.static('./node_modules/vonic/dist'))
 
+
+//推荐列表api
+// var recommandList = require('../src/server/routers/recommandrouter')
+// app.use('/sss',function(req, res, next) {
+//   console.log("sss")
+// })
+
 var uri = 'http://localhost:' + port
 
 devMiddleware.waitUntilValid(function () {
   console.log('> Listening at ' + uri + '\n')
 })
+
+// //推荐列表api
+// var recommandList = require('../src/server/routers/recommandrouter')
+// app.use('/sss',function(req, res, next) {
+//   console.log("sss")
+//   next()
+// })
 
 module.exports = app.listen(port, function (err) {
   if (err) {

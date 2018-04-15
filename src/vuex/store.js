@@ -49,7 +49,7 @@ export default new Vuex.Store(
       //页面跳转时保存播放歌曲的当前状态
       savePlayerState (state,currentaudio) {
         //由于页面跳转有延迟，所以加点时间
-        state.playercurrenttime = currentaudio.currentTime+0.3;
+        state.playercurrenttime = currentaudio.currentTime+0.5;
       },
       playNextSong(state,currentaudio){
         state.playerIndex =(state.playerIndex+1)%state.playerLength;
@@ -69,17 +69,10 @@ export default new Vuex.Store(
           newObj.recommandMusicSrc = item.linkUrl;
           state.recommandlist.push(newObj);
         }
-      }
-    }
-    actions: {
-      // 创建推荐列表
-      initRecommandList (state) {
-        axios({
-          method: 'post',
-          url: '/user',
-          data: context.state.test02
-        })
-      }
+      },
+      // setPlayercurrenttime(state,nowplayerCurrentTime){
+      //   state.playercurrenttime = nowplayerCurrentTime
+      // }
     }
   }
 )
