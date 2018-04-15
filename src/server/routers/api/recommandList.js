@@ -1,8 +1,8 @@
 //音乐排行榜
-const express = require('express');
-const app = express();
-const Server = require('../utils/httpServer');
-const router = express.Router()
+var express = require('express');
+var app = express();
+var Server = require('../../utils/httpServer');
+var router = express.Router()
 router.get('/', function(req, res) {
     var host = 'm.kugou.com';
     var path = '/rank/list&json=true';

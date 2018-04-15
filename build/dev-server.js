@@ -85,7 +85,25 @@ devMiddleware.waitUntilValid(function () {
 //   console.log("sss")
 //   next()
 // })
+// 配置后端代理路由
+//
+var apiServer = express()    //名称apiServer根据项目自定义，避免冲突为原则  
+var bodyParser = require('body-parser')  //express必须要进行的配置  
+apiServer.use(bodyParser.urlencoded({ extended: true }))  //  
+apiServer.use(bodyParser.json())  
+//var apiRouter = express.Router()  //配置路由，名称同样可以自拟  
+// var fs = require('fs')  
+var apiRouter = require('../src/server/routers/api/apiRouter')
+apiServer.use('/api', apiRouter);   //   配置 '/api'是因为做了服务器代理，所有要指明代理地址  
+apiServer.listen(4000, function (err) {  //配置接口端口号，为了方便查看，一般取前端口号+1  
+  if (err) {  
+    console.log(err)  
+    return  
+  }  
+  console.log('Listening at http://localhost:' + (4000) + '\n')  
+})  
 
+//
 module.exports = app.listen(port, function (err) {
   if (err) {
     console.log(err)
