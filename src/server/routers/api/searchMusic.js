@@ -1,5 +1,5 @@
-const express = require('express');
-const Server = require('../../utils/httpServer');
+var express = require('express');
+var Server = require('../../utils/httpServer');
 var router = express.Router()
 router.get('/',function(req,res){
     res.send("ssss")

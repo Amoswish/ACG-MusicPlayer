@@ -12,7 +12,7 @@ const request = require('request');
  * @param {bool} true false 是否为https
  * @returns
  */
-function httpGet(host, data, path, status) {
+function httpGet(host, data, path, status,cookies) {
     console.log('===================HttpGet=====================');
     var options = {
         host: host,
@@ -22,8 +22,9 @@ function httpGet(host, data, path, status) {
         encoding: null,
         headers: {
             'Content-Type': 'application/json',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.96 Safari/537.36',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36',
         },
+        cookies:cookies
     };
     //判断是否为https请求
     if (status) {
@@ -60,7 +61,7 @@ function httpGet(host, data, path, status) {
  * @param {bool} true false 是否为https
  * @returns
  */
-function ajaxGet(host, data, path, status) {
+function ajaxGet(host, data, path, status,cookies) {
     console.log('===================HttpGet=====================');
     var options = {
         host: host,
@@ -75,6 +76,7 @@ function ajaxGet(host, data, path, status) {
             Accept: 'application/json, text/javascript, */*; q=0.01',
             'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.96 Safari/537.36',
         },
+        cookies:cookies
     };
     //判断是否为https请求
     if (status) {
@@ -110,7 +112,7 @@ function ajaxGet(host, data, path, status) {
  * @param {bool} true false 是否为https
  * @returns
  */
-function httpMobileGet(host, data, path, status) {
+function httpMobileGet(host, data, path, status,cookies) {
     console.log('===================httpMobileGet=====================');
     var options = {
         host: host,
@@ -122,6 +124,7 @@ function httpMobileGet(host, data, path, status) {
             'Content-Type': 'application/json',
             'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 8_0 like Mac OS X) AppleWebKit/600.1.3 (KHTML, like Gecko) Version/8.0 Mobile/12A4345d Safari/600.1.4',
         },
+        cookies:cookies
     };
     //判断是否为https请求
     if (status) {
@@ -157,7 +160,7 @@ function httpMobileGet(host, data, path, status) {
  * @param {bool} true false 是否为https
  * @returns
  */
-function httpPost(host, data, path, status) {
+function httpPost(host, data, path, status,cookies) {
     var data = querystring.stringify(data);
     console.log('---------httpPost---------------');
     console.log(data);
@@ -171,6 +174,7 @@ function httpPost(host, data, path, status) {
             'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.96 Safari/537.36',
             'Content-Length': Buffer.byteLength(data), //返回字符串实际占据的字节长度
         },
+        cookies:cookies
     };
     //判断是否为https请求
     if (status) {

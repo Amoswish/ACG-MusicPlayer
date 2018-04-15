@@ -17,9 +17,18 @@ import store from '../vuex/store'
       }
     },
     methods: {
-      aaa(){
-        console.log(document.getElementsByTagName('p'))
-      }
+
     },
+    mounted:function initRecommandList(){
+        this.$http.get('http://localhost:8080/api/recommandList').then((body) =>{
+          //console.log(body.data.data)
+          store.commit('setRecommandList',body.data.data)
+        //http://music.163.com/song/media/outer/url?id=ID数字.mp3
+      }).catch(e => {
+              // 打印一下错误
+              console.log(e)
+      })
+      }
+    
   }
 </script>

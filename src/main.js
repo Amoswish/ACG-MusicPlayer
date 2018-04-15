@@ -11,6 +11,7 @@ import recommandList from './components/recommandList.vue'
 import importMusic from './components/importMusic.vue'
 import myMusic from './components/myMusic.vue'
 import musicplayerBottom from './components/musicplayerBottom.vue'
+import VueResource from 'vue-resource'
 import '../static/js/jquery.min.js'
 // import '../static/js/spider.js'
 Vue.component('searchMusic',searchMusic)
@@ -26,7 +27,7 @@ const routes = [
 ]
 //引入vuex
 Vue.use(Vuex)
-
+Vue.use(VueResource);
 //let store = Vuex.Store({
   // ...
 //})

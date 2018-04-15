@@ -25,6 +25,7 @@
     "serve-favicon": "^2.5.0",
     "tls": "0.0.1",
     "vonic": "^2.0.0-beta.10",
+    "vue-resource": "^1.5.0",
     "vuex": "^3.0.1"
   },
   "devDependencies": {

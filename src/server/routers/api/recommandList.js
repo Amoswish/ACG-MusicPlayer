@@ -1,19 +1,33 @@
 //音乐排行榜
-var express = require('express');
-var app = express();
-var Server = require('../../utils/httpServer');
-var router = express.Router()
+const express = require('express');
+const app = express();
+const Server = require('../../utils/httpServer');
+const router = express.Router()
+
+var cheerio = require('cheerio');
 router.get('/', function(req, res) {
-    var host = 'm.kugou.com';
-    var path = '/rank/list&json=true';
+    var host = 'music.163.com';
+    var path = '/discover/toplist';
     var data = {};
     //false:http请求  true:https请求
     Server.httpGet(host, data, path, false)
         .then(function(body) {
-            //res.send(JSON.parse(body)['rank'])
+            var $ = cheerio.load(body,{decodeEntities: false});    
+            var captionList = $(".f-hide").children('li'); 
+            //console.dir("ssdadfasdsd"+body )
+            var itemList = [];  
+            captionList.each(function(item) {  
+                var cap = $(this);   
+                var item = {  
+                    title: cap.find('a').text(),  
+                    linkUrl: cap.find('a').attr('href')  
+                }  
+                itemList.push(item);  
+            });  
+            console.dir(itemList)
             return res.send({
                 code: 200,
-                data: JSON.parse(body)['rank'],
+                data: itemList,
                 msg: '',
             });
         })

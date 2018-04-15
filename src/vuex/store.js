@@ -29,16 +29,6 @@ export default new Vuex.Store(
         },
       ],
       recommandList:[
-        {
-          recommandTitle:"推荐1",
-          recommandContent:"如果有一天我能够拥有一个大果园1111111111111111",
-          recommandMusicSrc:"",
-        },
-        {
-          recommandTitle:"推荐2",
-          recommandContent:"aaaz",
-          recommandMusicSrc:"",
-        }
       ],
       playercurrenttime:0,
       playerIndex:0,
@@ -66,8 +56,17 @@ export default new Vuex.Store(
         for(item in recommandlist){
           let newObj = {};
           newObj.recommandTitle = item.title;
-          newObj.recommandMusicSrc = item.linkUrl;
+          newObj.recommandMusicSrc = item.linkUrl.substring(9);
           state.recommandlist.push(newObj);
+        }
+      },
+      //将后台api获得的排行榜信息加入到推荐列表
+      setRecommandList(state,itemlist){
+        for(var i=0;i<itemlist.length;i++){
+          let newObj = {};
+          newObj.recommandTitle = itemlist[i].title;
+          newObj.recommandMusicSrc = itemlist[i].linkUrl.substring(9);;
+          state.recommandList.push(newObj);
         }
       },
       // setPlayercurrenttime(state,nowplayerCurrentTime){
