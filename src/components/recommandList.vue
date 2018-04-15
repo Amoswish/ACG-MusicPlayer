@@ -32,3 +32,10 @@ import store from '../vuex/store'
     
   }
 </script>
+<style>
+  .recommand-list{
+    overflow: auto;
+    height: 55ex;
+    /* height: 100ex; */
+  }
+</style>

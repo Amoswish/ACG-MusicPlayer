@@ -13,7 +13,6 @@
           <searchMusic></searchMusic>
         </div>
       </div>
-      <h2 class="padding" v-text="msg"></h2>
       <musicplayerBottom  :neededplayingsong="nowneededplaysong" class="aaa"></musicplayerBottom>
       </div>
       <!-- <div><router-link class="button button-assertive" to="/about">
