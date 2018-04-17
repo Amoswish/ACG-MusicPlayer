@@ -3,13 +3,13 @@
     <div class="page-content text-center">
       <tabs class="tabs music-header"   :tab-items="tabs" :tab-index="tabIndex" :on-tab-click="onTabClick"></tabs>
       <div class="main-content">
-        <div v-if="tabIndex==0" class="recommand">
-          <recommandList></recommandList>
+        <div v-show="tabIndex==0" class="recommand">
+          <recommandList v-on:playSelectRecommandMusic="playSelectedSong"></recommandList>
         </div>
-        <div v-if="tabIndex==1" class="myMusic">
+        <div v-show="tabIndex==1" class="myMusic">
           <myMusic v-on:child-say="playSelectedSong"></myMusic>
         </div>
-        <div v-if="tabIndex==2" class="search">
+        <div v-show="tabIndex==2" class="search">
           <searchMusic></searchMusic>
         </div>
       </div>

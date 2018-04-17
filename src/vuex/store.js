@@ -29,10 +29,12 @@ export default new Vuex.Store(
         },
       ],
       recommandList:[
+        // recommandTitle
+        // recommandMusicSrc
       ],
       playercurrenttime:0,
-      playerIndex:0,
-      playerLength:3,
+      playerIndex:0,//现在播放的歌曲的index
+      playerLength:3,//播放列表长度
     },
 
     mutations:{
@@ -62,16 +64,55 @@ export default new Vuex.Store(
       },
       //将后台api获得的排行榜信息加入到推荐列表
       setRecommandList(state,itemlist){
-        for(var i=0;i<itemlist.length;i++){
+        for(let i=0;i<itemlist.length;i++){
           let newObj = {};
           newObj.recommandTitle = itemlist[i].title;
           newObj.recommandMusicSrc = itemlist[i].linkUrl.substring(9);;
           state.recommandList.push(newObj);
         }
       },
-      // setPlayercurrenttime(state,nowplayerCurrentTime){
-      //   state.playercurrenttime = nowplayerCurrentTime
-      // }
+      //将推荐列表中的选中的音乐加入到播放列表
+      addtoplayerList(state,music){
+        let isinmusiclist = false
+        for(let i = 0; i<state.playerLength;i++){
+          if(state.musicList[i].musicName == music.recommandTitle){
+            isinmusiclist = true
+          }
+        }
+        if(!isinmusiclist){
+          let newObj = {};
+          newObj.musicName = music.recommandTitle;
+          newObj.musicSrc ="http://music.163.com/song/media/outer/url?id=" + music.recommandMusicSrc + ".mp3";
+          newObj.musicIndex = state.playerLength;
+          state.playerLength = state.playerLength+1;
+          state.musicList.push(newObj);
+        }
+      },
+      //将推荐列表中的选中的音乐加入到播放列表并播放
+      playAndAddToPlayerList(state ,music){
+        let isinmusiclist = false
+        let recordedmusicIndex = 0
+        for(let i = 0; i<state.playerLength;i++){
+          if(state.musicList[i].musicName == music.recommandTitle){
+            isinmusiclist = true
+            recordedmusicIndex = i
+          }
+        }
+        if(!isinmusiclist){
+          let newObj = {};
+          newObj.musicName = music.recommandTitle;
+          newObj.musicSrc ="http://music.163.com/song/media/outer/url?id=" + music.recommandMusicSrc + ".mp3";
+          newObj.musicIndex = state.playerLength;
+          state.playerLength = state.playerLength+1;
+          state.musicList.push(newObj);
+          state.playerIndex = state.playerLength-1
+        }
+        else{
+          //
+          state.playerIndex = recordedmusicIndex;
+        }
+      }
+
     }
   }
 )

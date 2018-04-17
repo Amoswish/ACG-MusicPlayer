@@ -21,7 +21,14 @@
     methods: {
       onSearch(keywords) {
         this.searching = true;
-        console.log(document)
+        let searchurl = "http://music.163.com/#/search/m/?s="+keywords+"&type=1"
+      this.$http.get(searchurl).then((body) =>{
+          console.log(body)
+      }).catch(e => {
+              // 打印一下错误
+              console.log(e)
+      })
+        // http://music.163.com/#/search/m/?s=%E6%AD%A6%E6%B1%89&type=1
          this.keywords = 'aaa'
       },
 

@@ -24,7 +24,6 @@ router.get('/', function(req, res) {
                 }  
                 itemList.push(item);  
             });  
-            console.dir(itemList)
             return res.send({
                 code: 200,
                 data: itemList,
