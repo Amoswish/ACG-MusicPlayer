@@ -171,7 +171,7 @@ function httpPost(host, data, path, status,cookies) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.96 Safari/537.36',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36',
             'Content-Length': Buffer.byteLength(data), //返回字符串实际占据的字节长度
         },
         cookies:cookies
@@ -202,9 +202,39 @@ function httpPost(host, data, path, status,cookies) {
         post_req.end();
     });
 }
+/**
+ * simplehttp POST 请求
+ * @param {string} url
+ * @param {bool} true false 是否为https
+ * @returns
+ */
+function simpleHttpPost(url,status){
+    // http://music.163.com/api/search/pc?s=踩踩踩&offset=1&limit=100&type=1
+    console.log('---------simpleHttpPost---------------');
+    //判断是否为https请求
+    if (status) {
+        http = require('https');
+        options.port = 443;
+    }
+    return new Promise(function(resolve, reject) {
+        let body = '';
+        request.post(url, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                 resolve(body) // Show the HTML for the baidu homepage.
+            }
+})
+
+    });
+    // request.post(url, function (error, response, body) {
+    // if (!error && response.statusCode == 200) {
+    //     console.log(body) // Show the HTML for the baidu homepage.
+    // }
+    // })
+}
 module.exports = {
     httpGet,
     httpPost,
     httpMobileGet,
     ajaxGet,
+    simpleHttpPost,
 };

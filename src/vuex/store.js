@@ -111,6 +111,10 @@ export default new Vuex.Store(
           //
           state.playerIndex = recordedmusicIndex;
         }
+      },
+      //根据歌曲index从播放列表删除
+      deleteSong(neededeletedsongIndex){
+
       }
 
     }
